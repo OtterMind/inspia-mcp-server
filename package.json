@@ -1,0 +1,34 @@
+{
+  "name": "@inspia/mcp-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Read-only Inspia prompt discovery over MCP Streamable HTTP",
+  "engines": {
+    "bun": ">=1.3.14",
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "start": "bun dist/index.js",
+    "build": "bun build src/index.ts --target=bun --outdir=dist --external @modelcontextprotocol/server --external zod --external marked",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test test",
+    "test:live": "bun scripts/smoke.ts",
+    "check": "bun run lint && bun run typecheck && bun run test && bun run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.0.0",
+    "marked": "18.0.11",
+    "zod": "4.5.4"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.12",
+    "@modelcontextprotocol/client": "2.0.0",
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "@types/bun": "1.4.1",
+    "typescript": "5.9.3"
+  }
+}
