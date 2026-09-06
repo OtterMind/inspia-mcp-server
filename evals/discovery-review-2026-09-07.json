@@ -1,0 +1,142 @@
+{
+  "method": "Assistant manual review of the full top-1 prompt text for 22 semantic queries. Not a human-labeled benchmark, visual review, or top-3 precision score. Exact-title and nonsense probes are excluded.",
+  "rubric": {
+    "relevant": "Main subject and requested format/style match",
+    "partial": "Related subject or genre, but a requested constraint is missing or contradicted",
+    "off_topic": "Main subject or scenario does not match"
+  },
+  "reviews": [
+    {
+      "caseId": "product-en",
+      "promptId": "x-2041012030216536237",
+      "grade": "relevant",
+      "reason": "Product bottle, minimal composition and studio photography match."
+    },
+    {
+      "caseId": "product-zh",
+      "promptId": "x-2074712585543544832",
+      "grade": "partial",
+      "reason": "Product-focused, but a complex multi-angle advertisement rather than a simple product photograph."
+    },
+    {
+      "caseId": "product-filtered-en",
+      "promptId": "x-2035938528341930225",
+      "grade": "relevant",
+      "reason": "Minimal studio skincare product photograph matches."
+    },
+    {
+      "caseId": "product-filtered-zh",
+      "promptId": "x-2074712585543544832",
+      "grade": "partial",
+      "reason": "Product-focused, but includes headlines, feature lists and a multi-angle gallery."
+    },
+    {
+      "caseId": "skincare-en",
+      "promptId": "x-2024642193517162967",
+      "grade": "off_topic",
+      "reason": "Male studio portrait with no skincare bottle as the subject."
+    },
+    {
+      "caseId": "skincare-zh",
+      "promptId": "x-2051515902055882989",
+      "grade": "partial",
+      "reason": "White perfume bottle and a man, not the requested pink skincare bottle."
+    },
+    {
+      "caseId": "food-en",
+      "promptId": "x-2053160083916472611",
+      "grade": "partial",
+      "reason": "Burger is present, but output is a dense Pixar-style storyboard poster rather than minimal food photography."
+    },
+    {
+      "caseId": "food-zh",
+      "promptId": "x-2052969695406325875",
+      "grade": "off_topic",
+      "reason": "Mixed study portrait and salmon bagel prompts; no burger."
+    },
+    {
+      "caseId": "portrait-en",
+      "promptId": "a74d4b97c88be45428d5c3a1724751cfb68b0d13903299b1fb44d4110d106e81",
+      "grade": "partial",
+      "reason": "Portrait, but a colored cafe lifestyle scene rather than black-and-white studio work."
+    },
+    {
+      "caseId": "portrait-zh",
+      "promptId": "x-2074372844331389128",
+      "grade": "partial",
+      "reason": "Low-saturation portrait, but outdoors rather than in a studio."
+    },
+    {
+      "caseId": "perfume-en",
+      "promptId": "x-2028995926149480728",
+      "grade": "relevant",
+      "reason": "Perfume bottle, minimal composition and premium product photography match."
+    },
+    {
+      "caseId": "perfume-zh",
+      "promptId": "x-2035938528341930225",
+      "grade": "partial",
+      "reason": "Minimal product photograph but skincare powder rather than perfume."
+    },
+    {
+      "caseId": "poster-en",
+      "promptId": "x-2069985141444010294",
+      "grade": "partial",
+      "reason": "Typography poster, but explicitly ornate, detailed and decorative rather than minimal."
+    },
+    {
+      "caseId": "poster-zh",
+      "promptId": "x-2065115460820218326",
+      "grade": "relevant",
+      "reason": "Bold typography poster with explicit minimal layout and clean composition."
+    },
+    {
+      "caseId": "travel-en",
+      "promptId": "x-2060421931929604250",
+      "grade": "relevant",
+      "reason": "Vintage illustrated travel poster matches."
+    },
+    {
+      "caseId": "travel-zh",
+      "promptId": "44202d2ea5353b4e56a1590d1e0b0aa94a83697861d81e8bbb8b4edbd3aa1b11",
+      "grade": "partial",
+      "reason": "Vintage illustrated travel theme, but mixed-media scrapbook flat-lay rather than a travel poster."
+    },
+    {
+      "caseId": "interior-en",
+      "promptId": "x-2013531264217751557",
+      "grade": "off_topic",
+      "reason": "Detailed celebrity portrait on a couch; interior is only background."
+    },
+    {
+      "caseId": "interior-zh",
+      "promptId": "x-2053716739624468964",
+      "grade": "off_topic",
+      "reason": "Person in a creative home studio, not a living-room interior photograph."
+    },
+    {
+      "caseId": "video-product-en",
+      "promptId": "x-2070731450232791550",
+      "grade": "relevant",
+      "reason": "Hairdryer product commercial with a final product hero shot."
+    },
+    {
+      "caseId": "video-product-zh",
+      "promptId": "9c0345ea75442c972a865cc44dca0c5581eb4d76c5c68fe5222a03d76ccbe5c3",
+      "grade": "relevant",
+      "reason": "Cinematic product-led beauty advertisement matches."
+    },
+    {
+      "caseId": "video-street-en",
+      "promptId": "x-2066166479192793320",
+      "grade": "off_topic",
+      "reason": "Fantasy apocalypse trailer, not a rainy street tracking shot."
+    },
+    {
+      "caseId": "video-street-zh",
+      "promptId": "x-2073030433965486543",
+      "grade": "off_topic",
+      "reason": "Golden-hour helicopter proposal on a skyscraper, not rainy street tracking."
+    }
+  ]
+}

@@ -1,0 +1,149 @@
+[
+  {
+    "id": "product-en",
+    "query": "minimalist product photography",
+    "mediaType": "image",
+    "intent": "Minimal product-focused studio photography"
+  },
+  {
+    "id": "product-zh",
+    "query": "极简产品摄影",
+    "mediaType": "image",
+    "intent": "Minimal product-focused studio photography"
+  },
+  {
+    "id": "product-filtered-en",
+    "query": "minimalist product photography",
+    "mediaType": "image",
+    "subcategory": "ads-products",
+    "intent": "Minimal product-focused studio photography"
+  },
+  {
+    "id": "product-filtered-zh",
+    "query": "极简产品摄影",
+    "mediaType": "image",
+    "subcategory": "ads-products",
+    "intent": "Minimal product-focused studio photography"
+  },
+  {
+    "id": "skincare-en",
+    "query": "pink skincare bottle studio photography",
+    "mediaType": "image",
+    "intent": "Pink skincare bottle as the main subject"
+  },
+  {
+    "id": "skincare-zh",
+    "query": "粉色护肤品瓶子 棚拍",
+    "mediaType": "image",
+    "intent": "Pink skincare bottle as the main subject"
+  },
+  {
+    "id": "food-en",
+    "query": "minimal gourmet burger photography",
+    "mediaType": "image",
+    "intent": "Burger-focused food photography with restrained composition"
+  },
+  {
+    "id": "food-zh",
+    "query": "极简汉堡美食摄影",
+    "mediaType": "image",
+    "intent": "Burger-focused food photography with restrained composition"
+  },
+  {
+    "id": "portrait-en",
+    "query": "black and white studio portrait",
+    "mediaType": "image",
+    "intent": "Monochrome studio portrait of a person"
+  },
+  {
+    "id": "portrait-zh",
+    "query": "黑白棚拍人像",
+    "mediaType": "image",
+    "intent": "Monochrome studio portrait of a person"
+  },
+  {
+    "id": "perfume-en",
+    "query": "minimal luxury perfume bottle photography",
+    "mediaType": "image",
+    "intent": "Perfume bottle as the main subject with minimal styling"
+  },
+  {
+    "id": "perfume-zh",
+    "query": "极简奢华香水瓶摄影",
+    "mediaType": "image",
+    "intent": "Perfume bottle as the main subject with minimal styling"
+  },
+  {
+    "id": "poster-en",
+    "query": "minimal typography poster design",
+    "mediaType": "image",
+    "intent": "Typography-led minimal poster or graphic design"
+  },
+  {
+    "id": "poster-zh",
+    "query": "极简字体排版海报设计",
+    "mediaType": "image",
+    "intent": "Typography-led minimal poster or graphic design"
+  },
+  {
+    "id": "travel-en",
+    "query": "vintage travel poster illustration",
+    "mediaType": "image",
+    "intent": "Illustrated vintage travel or tourism poster"
+  },
+  {
+    "id": "travel-zh",
+    "query": "复古旅行海报插画",
+    "mediaType": "image",
+    "intent": "Illustrated vintage travel or tourism poster"
+  },
+  {
+    "id": "interior-en",
+    "query": "minimalist living room interior photography",
+    "mediaType": "image",
+    "intent": "Minimal living room interior or architectural photograph"
+  },
+  {
+    "id": "interior-zh",
+    "query": "极简客厅室内摄影",
+    "mediaType": "image",
+    "intent": "Minimal living room interior or architectural photograph"
+  },
+  {
+    "id": "video-product-en",
+    "query": "cinematic product commercial",
+    "mediaType": "video",
+    "intent": "Product-led commercial video"
+  },
+  {
+    "id": "video-product-zh",
+    "query": "电影感产品广告视频",
+    "mediaType": "video",
+    "intent": "Product-led commercial video"
+  },
+  {
+    "id": "video-street-en",
+    "query": "cinematic rainy street tracking shot",
+    "mediaType": "video",
+    "intent": "A video tracking shot on a rainy street"
+  },
+  {
+    "id": "video-street-zh",
+    "query": "雨夜街道电影跟拍镜头",
+    "mediaType": "video",
+    "intent": "A video tracking shot on a rainy street"
+  },
+  {
+    "id": "exact-title",
+    "query": "Minimalist Vintage Travel Poster",
+    "mediaType": "image",
+    "intent": "Exact known title should rank first",
+    "expectedFirstId": "taaruk-vintage-travel-poster"
+  },
+  {
+    "id": "nonsense",
+    "query": "zz_inspia_no_match_8eaf7610_kqzpv",
+    "mediaType": "image",
+    "intent": "Abstention diagnostic; nonempty results require manual relevance review"
+  }
+]
