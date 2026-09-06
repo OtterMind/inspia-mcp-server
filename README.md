@@ -188,7 +188,7 @@ Current upstream constraints are deliberate:
   filters/page size, and are HMAC signed. They do not provide a snapshot across
   catalog publications. Keep `MCP_CURSOR_SECRET` stable across replicas/restarts;
   without it, a local restart intentionally invalidates existing cursors.
-- The pending cursor patch emits v2 tokens containing a SHA-256 filter digest
+- The deployed cursor patch emits v2 tokens containing a SHA-256 filter digest
   instead of the full URL-encoded filters. Valid v1 tokens remain readable until
   their original expiry. Input, output and decoder size limits share one contract.
   An upstream cursor over the website's 2,048-character limit produces
@@ -229,10 +229,11 @@ These opt-in commands default to the public production endpoint, pace requests,
 and write evidence to ignored `.validation/` directories. Contract checks are
 separate from relevance review; successful requests do not establish search
 quality. See the [0.1 verification report](docs/verification-0.1-2026-09-07.md).
-The deployed 0.1 currently fails the long-Chinese-query pagination boundary check.
-The local pending patch passes all seven boundary checks; test it by setting
-`MCP_SMOKE_URL` to the locally running patched service. Production remains on the
-original release until the patch is deployed.
+Production source revision `8c39eeb` passes all seven boundary checks, including
+three pages of results for the reproduced long Chinese query. The fix was
+deployed and verified on 2026-09-07; the earlier failure remains documented as
+baseline evidence. Search relevance is a separate upstream improvement and is
+not claimed to be fixed by the pagination patch.
 
 To check production:
 

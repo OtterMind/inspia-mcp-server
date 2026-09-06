@@ -1,14 +1,15 @@
 # Production Operations
 
-Verified on 2026-09-06. Public endpoint: **https://inspia.ai/mcp**.
+Verified on 2026-09-07. Public endpoint: **https://inspia.ai/mcp**.
 
 ## Installed Layout
 
 | Item | Location |
 | --- | --- |
 | Host | Existing Inspia host, `47.89.251.12` |
-| Application source revision | `2c01ea2bad8a23a80058e4f2a254081633893d1a` |
-| Release | `/opt/inspia-mcp/releases/2c01ea2` |
+| Application source revision | `8c39eeb3f1cdce86d44dd52c01ae37a4161652da` |
+| Release | `/opt/inspia-mcp/releases/8c39eeb` |
+| Previous release retained for rollback | `/opt/inspia-mcp/releases/2c01ea2` |
 | Active release symlink | `/opt/inspia-mcp/current` |
 | Pinned runtime | `/opt/inspia-mcp/runtime/bun`, version 1.3.14, Linux x64 baseline |
 | Service | `inspia-mcp.service`, non-login user/group `inspia-mcp` |
@@ -59,6 +60,25 @@ Keep the rate-limit file in HTTP context and the location file inside the
 `inspia.ai` HTTPS server. Do not expose port 8788 on a public interface.
 
 ## Verification
+
+The pagination update passed GitHub CI run `34045932928` for the exact source
+revision above. A candidate service on loopback port 8790 passed the five-tool
+smoke and seven boundary checks before the active symlink was switched.
+
+After switching production, the public endpoint passed both suites again:
+the 360-character Chinese query produced a 2,466-character cursor and three
+pages with nine distinct IDs. A real v1 cursor issued before deployment still
+worked afterward, with no overlap between its first and second page. Codex's
+native MCP tools also successfully paginated the long query against production.
+
+Production cursor/pagination source hashes matched the local release. MCP was
+active with zero automatic restarts; the website retained its prior process and
+returned HTTP 200. No Nginx configuration or environment secrets changed during
+this patch deployment. The temporary candidate service and SSH tunnel were
+removed after validation.
+
+The source revision identifies the application; later documentation-only commits
+do not require restarting it. The service still advertises package version 0.1.0.
 
 The initial release passed:
 
