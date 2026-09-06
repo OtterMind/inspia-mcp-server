@@ -1,13 +1,29 @@
-import { createHmac, timingSafeEqual } from "node:crypto";
+import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { z } from "zod";
 import { DiscoveryError } from "./errors";
+import {
+  CURSOR_TTL_MS,
+  mcpCursorSchema,
+  unsupportedUpstreamCursor,
+  upstreamCursorSchema,
+} from "./pagination";
 
-const payloadSchema = z.strictObject({
-  v: z.literal(1),
-  filters: z.string(),
-  upstream: z.string().min(1).max(2048),
+const commonPayload = {
+  upstream: upstreamCursorSchema,
   expires: z.number().int(),
-});
+};
+const payloadSchema = z.discriminatedUnion("v", [
+  z.strictObject({ v: z.literal(1), filters: z.string(), ...commonPayload }),
+  z.strictObject({
+    v: z.literal(2),
+    filterHash: z.string().regex(/^[a-f0-9]{64}$/),
+    ...commonPayload,
+  }),
+]);
+
+function hashFilters(filters: string) {
+  return createHash("sha256").update(filters).digest("hex");
+}
 
 export class CursorCodec {
   constructor(
@@ -16,14 +32,22 @@ export class CursorCodec {
     private readonly now = Date.now,
   ) {}
   encode(upstream: string, filters: string): string {
+    if (!upstreamCursorSchema.safeParse(upstream).success) throw unsupportedUpstreamCursor();
     const payload = Buffer.from(
-      JSON.stringify({ v: 1, filters, upstream, expires: this.now() + 15 * 60_000 }),
+      JSON.stringify({
+        v: 2,
+        filterHash: hashFilters(filters),
+        upstream,
+        expires: this.now() + CURSOR_TTL_MS,
+      }),
     ).toString("base64url");
-    return `${payload}.${this.sign(payload)}`;
+    const cursor = `${payload}.${this.sign(payload)}`;
+    if (!mcpCursorSchema.safeParse(cursor).success) throw unsupportedUpstreamCursor();
+    return cursor;
   }
   decode(value: string, filters: string): string {
     try {
-      if (value.length > 6000) throw new Error();
+      mcpCursorSchema.parse(value);
       const parts = value.split(".");
       if (parts.length !== 2) throw new Error();
       const [payload = "", signature = ""] = parts;
@@ -34,7 +58,9 @@ export class CursorCodec {
       const parsed = payloadSchema.parse(
         JSON.parse(Buffer.from(payload, "base64url").toString("utf8")),
       );
-      if (parsed.expires <= this.now() || parsed.filters !== filters) throw new Error();
+      const matchesFilters =
+        parsed.v === 1 ? parsed.filters === filters : parsed.filterHash === hashFilters(filters);
+      if (parsed.expires <= this.now() || !matchesFilters) throw new Error();
       return parsed.upstream;
     } catch {
       throw new DiscoveryError(

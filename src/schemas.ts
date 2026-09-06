@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { SOURCE_MODELS, SUBJECTS } from "./filter-vocabulary";
+import { mcpCursorSchema, upstreamCursorSchema } from "./pagination";
 
 export const mediaTypeSchema = z.enum(["image", "video"]);
 export const promptIdSchema = z.string().regex(/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,159}$/);
@@ -26,7 +27,7 @@ export const searchInput = z.strictObject({
     .enum(["featured", "newest", "popular"])
     .optional()
     .describe("For browsing only. Search uses relevance; popular means imported X metrics."),
-  cursor: z.string().min(1).max(6000).optional(),
+  cursor: mcpCursorSchema.optional(),
   limit: z.number().int().min(1).max(20).default(6),
 });
 export type SearchInput = z.infer<typeof searchInput>;
@@ -79,7 +80,7 @@ export const upstreamItem = z.object({
 });
 export const upstreamPage = z.object({
   items: z.array(upstreamItem).max(100),
-  nextCursor: z.string().max(2048).nullable(),
+  nextCursor: upstreamCursorSchema.nullable(),
   total: z.number().int().nonnegative(),
   search: z
     .object({
@@ -171,7 +172,7 @@ export const summarySchema = z.object({
 });
 export const searchOutput = z.object({
   items: z.array(summarySchema),
-  nextCursor: z.string().nullable(),
+  nextCursor: mcpCursorSchema.nullable(),
   hasMore: z.boolean(),
   searchMode: z.enum(["browse", "hybrid", "keyword", "semantic", "unknown"]),
   degraded: z.boolean(),

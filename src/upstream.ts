@@ -1,6 +1,7 @@
-import type { z } from "zod";
+import { z } from "zod";
 import type { Config } from "./config";
 import { DiscoveryError } from "./errors";
+import { MAX_UPSTREAM_CURSOR_CHARS, unsupportedUpstreamCursor } from "./pagination";
 
 export type Fetcher = (input: string | URL | Request, init?: RequestInit) => Promise<Response>;
 
@@ -114,7 +115,19 @@ export class InspiaClient {
     const text = await this.text(path, params);
     try {
       return schema.parse(JSON.parse(text));
-    } catch {
+    } catch (error) {
+      if (
+        path === "/api/prompts" &&
+        error instanceof z.ZodError &&
+        error.issues.some(
+          (issue) =>
+            issue.path.length === 1 &&
+            issue.path[0] === "nextCursor" &&
+            issue.code === "too_big" &&
+            issue.maximum === MAX_UPSTREAM_CURSOR_CHARS,
+        )
+      )
+        throw unsupportedUpstreamCursor();
       throw new DiscoveryError(
         "UPSTREAM_INVALID_RESPONSE",
         "Inspia's public response no longer matches the supported contract.",
