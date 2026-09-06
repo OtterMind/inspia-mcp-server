@@ -1,0 +1,31 @@
+[Unit]
+Description=Inspia read-only MCP discovery service
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=inspia-mcp
+Group=inspia-mcp
+WorkingDirectory=/opt/inspia-mcp/current
+EnvironmentFile=/etc/inspia-mcp.env
+Environment=NODE_ENV=production
+ExecStart=/opt/inspia-mcp/runtime/bun dist/index.js
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=20
+KillSignal=SIGTERM
+UMask=0027
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+MemoryMax=512M
+CPUQuota=100%
+TasksMax=64
+LimitNOFILE=2048
+
+[Install]
+WantedBy=multi-user.target
