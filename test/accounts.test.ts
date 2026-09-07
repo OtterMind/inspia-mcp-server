@@ -8,13 +8,15 @@ import { loadConfig } from "../src/config";
 import type { Fetcher } from "../src/upstream";
 import { fakeUpstream } from "./fixtures";
 
+const VALID = `Bearer inspia_sk_${"a".repeat(64)}`;
+const LIMITED = `Bearer inspia_sk_${"b".repeat(64)}`;
+const REVOKED = `Bearer inspia_sk_${"c".repeat(64)}`;
 function setup() {
   const calls: string[] = [];
   const upstream = fakeUpstream();
   const fixtureId = "c49d6d90-1f54-4d53-a82f-67a85f5012ca";
   const config = loadConfig({
     MCP_ACCOUNT_ENABLED: "true",
-    MCP_RESOURCE_URL: "http://localhost:8788/mcp",
     MCP_CURSOR_SECRET: "x".repeat(32),
   });
   const fetcher: Fetcher = async (input, init) => {
@@ -22,15 +24,14 @@ function setup() {
     if (!path.startsWith("/api/mcp/")) return upstream.fetcher(input, init);
     calls.push(path);
     const token = new Headers(init?.headers).get("authorization");
-    if (token === "Bearer revoked")
-      return Response.json({ code: "INVALID_TOKEN" }, { status: 401 });
+    if (token === REVOKED) return Response.json({ code: "INVALID_TOKEN" }, { status: 401 });
     if (path === "/api/mcp/access")
       return Response.json({
         userId: "user",
         clientId: "client",
         connectionId: "connection",
         scopes:
-          token === "Bearer limited"
+          token === LIMITED
             ? []
             : ["credits:read", "assets:read", "generation:create", "tasks:read"],
         expiresAt: token?.startsWith("Bearer inspia_sk_") ? null : Date.now() / 1000 + 600,
@@ -122,8 +123,8 @@ for (const legacy of [false, true])
     try {
       await client.connect(
         legacy
-          ? new LegacyTransport(url, { fetch: transportFetch("Bearer valid") })
-          : new StreamableHTTPClientTransport(url, { fetch: transportFetch("Bearer valid") }),
+          ? new LegacyTransport(url, { fetch: transportFetch(VALID) })
+          : new StreamableHTTPClientTransport(url, { fetch: transportFetch(VALID) }),
       );
       expect((await client.listTools()).tools).toHaveLength(10);
       const credits = await client.callTool({ name: "get_credits", arguments: {} });
@@ -187,6 +188,28 @@ test("non-expiring API keys work through the MCP transport with nullable account
     await app.close();
   }
 });
+test("OAuth JWTs are refused without contacting the upstream or publishing discovery metadata", async () => {
+  const { app, calls, config, fetcher } = setup();
+  try {
+    await expect(
+      new AccountService(config, fetcher).authenticate(
+        "Bearer eyJhbGciOiJFZERTQSJ9.payload.signature",
+      ),
+    ).rejects.toThrow("Invalid authorization");
+    expect(calls).toHaveLength(0);
+    for (const path of [
+      "/.well-known/oauth-protected-resource/mcp",
+      "/.well-known/oauth-authorization-server",
+    ]) {
+      const response = await app.fetch(
+        new Request(`http://localhost:8788${path}`, { headers: { Host: "localhost:8788" } }),
+      );
+      expect(response.status).toBe(404);
+    }
+  } finally {
+    await app.close();
+  }
+});
 
 test("HTTP authorization challenges, resource metadata, anonymous discovery and revoked tokens", async () => {
   const { app, calls, transportFetch } = setup();
@@ -196,11 +219,11 @@ test("HTTP authorization challenges, resource metadata, anonymous discovery and 
         headers: { Host: "localhost:8788" },
       }),
     );
-    expect((await metadata.json()).resource).toBe("http://localhost:8788/mcp");
+    expect(metadata.status).toBe(404);
     for (const [token, status] of [
       [undefined, 401],
-      ["Bearer limited", 403],
-      ["Bearer revoked", 401],
+      [LIMITED, 403],
+      [REVOKED, 401],
     ] as const) {
       const response = await transportFetch(token)("http://localhost:8788/mcp", {
         method: "POST",
@@ -214,6 +237,7 @@ test("HTTP authorization challenges, resource metadata, anonymous discovery and 
       });
       expect(response.status).toBe(status);
       expect(response.headers.get("WWW-Authenticate")).toContain("credits:read");
+      expect(response.headers.get("WWW-Authenticate")).not.toContain("resource_metadata");
     }
     expect(calls).not.toContain("/api/mcp/credits");
     const client = new Client({ name: "anonymous", version: "1" });
@@ -237,9 +261,7 @@ test("account upstream refuses path injection, redirects and malformed credentia
   const { app, config, fetcher } = setup();
   try {
     const service = new AccountService(config, fetcher);
-    await expect(service.request("/api/admin", "Bearer valid")).rejects.toThrow(
-      "Invalid account endpoint",
-    );
+    await expect(service.request("/api/admin", VALID)).rejects.toThrow("Invalid account endpoint");
     await expect(service.request("/api/mcp/credits", "Basic abc")).rejects.toThrow(
       "Invalid authorization",
     );
@@ -248,7 +270,7 @@ test("account upstream refuses path injection, redirects and malformed credentia
       async () =>
         new Response(null, { status: 302, headers: { Location: "https://evil.example" } }),
     );
-    await expect(redirect.request("/api/mcp/credits", "Bearer valid")).rejects.toThrow();
+    await expect(redirect.request("/api/mcp/credits", VALID)).rejects.toThrow();
   } finally {
     await app.close();
   }

@@ -18,7 +18,7 @@
   implementation changes. `bun run test:live` is opt-in public read-only QA.
 - Do not deploy, publish the package, add private tools or run paid generation
   as part of a Discovery change.
-- MCP 1.0 is documented in docs/MCP_1_0.md. Main-site OAuth Connections,
-  immutable quotes and atomic spending limits authorize generation. Retrying
+- MCP 1.0 is documented in docs/MCP_1_0.md. Main-site API keys,
+  immutable quotes and Billing balance checks authorize generation. Retrying
   submission must reuse the original idempotency key; never auto-resubmit
   after an unknown result. Feature flags default off.

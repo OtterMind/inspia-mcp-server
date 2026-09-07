@@ -5,14 +5,14 @@ opt-in **1.0 account tools** for Credits, tasks, private assets and
 quoted single-image generation. See [MCP 1.0](docs/MCP_1_0.md) for the new
 backend requirements, configuration and verification instructions.
 
-The new API Keys management flow uses `inspia_sk_` Bearer credentials and
-retains OAuth compatibility. Deployed on 2026-09-07; see
-[production operations](deploy/README.md) for revisions and verification limits.
+Account tools use `inspia_sk_` Bearer API keys. The current source removes old
+MCP OAuth compatibility; this removal has not yet been deployed. See
+[production operations](deploy/README.md) for the last deployed revision.
 
 **Production endpoint: [https://inspia.ai/mcp](https://inspia.ai/mcp)**
 
-Production runs **1.0 with API Keys and OAuth**. The connection instructions
-below describe anonymous Discovery; private tools require authentication.
+The connection instructions below describe anonymous Discovery; private tools
+require an API key from [API Keys](https://inspia.ai/account/api-keys).
 
 Connect with **Streamable HTTP**, without an account or API key. No local server,
 Bun installation, or npm package is needed to use the hosted service. It reads
@@ -326,8 +326,8 @@ docker run --rm --env-file .env -p 127.0.0.1:8788:8788 inspia-mcp-server
 A missing cursor secret or explicit host allowlist fails startup on a
 non-loopback listener. Docker packaging has not been validated in this environment.
 
-## Next boundary
+## Account Tools
 
-OAuth, private media, Credits, quotes and generation belong to the later Create
-milestone. They require coordinated changes to the Inspia application, not
-proxying website cookies through this read-only service.
+Private media, Credits, quotes and generation use the matching Inspia site's
+protected APIs. Authenticate with an API key; website cookies and former OAuth
+tokens are not accepted. See [MCP 1.0](docs/MCP_1_0.md) for setup and testing.

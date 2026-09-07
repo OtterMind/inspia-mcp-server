@@ -42,7 +42,7 @@ export function createServer(service: DiscoveryService, accounts?: AccountServic
       instructions: accounts
         ? instructions.replace(
             "This server cannot generate, upload, access private accounts or spend Credits.",
-            "Account tools accept an Inspia API key or OAuth. Create keys at https://inspia.ai/account/api-keys. Show quoted Credits before generation; obey any returned connection limits. API keys use the account Credits balance. Reuse the original idempotencyKey after interruption and poll get_task. Never share private assets or tokens.",
+            "Account tools require an Inspia API key. Create keys at https://inspia.ai/account/api-keys. Show quoted Credits before generation. API keys use the account Credits balance. Reuse the original idempotencyKey after interruption and poll get_task. Never share private assets or tokens.",
           )
         : instructions,
     },

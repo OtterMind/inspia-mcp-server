@@ -35,32 +35,17 @@ export class AccountService {
     private readonly config: Config,
     private readonly fetcher: Fetcher = fetch,
   ) {}
-  metadata() {
-    return {
-      resource: this.config.resourceUrl,
-      authorization_servers: [this.config.issuerUrl],
-      scopes_supported: [
-        "catalog:read",
-        "credits:read",
-        "tasks:read",
-        "assets:read",
-        "generation:create",
-      ],
-      bearer_methods_supported: ["header"],
-    };
-  }
   challenge(status = 401, scopes: readonly string[] = []) {
-    const url = new URL(this.config.resourceUrl);
     return Response.json(
       {
         code: status === 403 ? "INSUFFICIENT_SCOPE" : "AUTH_REQUIRED",
-        error: "Connect your Inspia account with the required permissions",
+        error: "Use an Inspia API key from https://inspia.ai/account/api-keys",
       },
       {
         status,
         headers: {
           "Cache-Control": "private, no-store",
-          "WWW-Authenticate": `Bearer resource_metadata="${url.origin}/.well-known/oauth-protected-resource/mcp"${scopes.length ? `, scope="${scopes.join(" ")}"` : ""}${status === 403 ? ', error="insufficient_scope"' : ""}`,
+          "WWW-Authenticate": `Bearer realm="Inspia"${scopes.length ? `, scope="${scopes.join(" ")}"` : ""}${status === 403 ? ', error="insufficient_scope"' : ', error="invalid_token"'}`,
         },
       },
     );
@@ -77,7 +62,7 @@ export class AccountService {
     body?: Record<string, unknown>,
     params?: URLSearchParams,
   ): Promise<Record<string, unknown>> {
-    if (!/^Bearer [A-Za-z0-9_.-]+$/.test(token) || token.length > 16391)
+    if (!/^Bearer inspia_sk_[0-9a-f]{64}$/.test(token))
       throw new AccountError("INVALID_TOKEN", "Invalid authorization", 401);
     if (
       ![
@@ -125,7 +110,7 @@ export class AccountService {
             : "ACCOUNT_UNAVAILABLE";
         const message =
           response.status === 401
-            ? "Reconnect your Inspia account"
+            ? "Replace the expired or revoked Inspia API key"
             : response.status === 403
               ? "Additional account permissions are required"
               : response.status >= 500

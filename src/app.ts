@@ -42,12 +42,6 @@ export function createApp(config: Config, fetcher?: Fetcher) {
     const origin = request.headers.get("origin");
     if (origin !== null && !config.allowedOrigins.includes(origin))
       return json({ error: "Origin is not allowed" }, 403);
-    if (
-      accounts &&
-      request.method === "GET" &&
-      url.pathname === "/.well-known/oauth-protected-resource/mcp"
-    )
-      return json(accounts.metadata());
     if (request.method === "GET" && url.pathname === "/healthz") {
       return json({
         status: "ok",

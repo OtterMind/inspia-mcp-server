@@ -45,7 +45,7 @@ export function registerAccountTools(server: McpServer, accounts: AccountService
     "get_credits",
     {
       description:
-        "Read your Inspia Credits balance. API keys use the account balance and return null for connection limits; existing OAuth grants may have limits. Requires credits:read.",
+        "Read your Inspia Credits balance. API keys use the account balance; connection limit fields are always null. Requires credits:read.",
       inputSchema: z.strictObject({}),
       outputSchema: output(creditsSchema),
       annotations: read,
@@ -94,7 +94,7 @@ export function registerAccountTools(server: McpServer, accounts: AccountService
     "generate_image",
     {
       description:
-        "Submit the exact single-image intent frozen in quoteId, within the user's authorized spending limits. This consumes Credits. Keep the SAME idempotencyKey when retrying a timed-out request. Returns a durable task; use get_task for status.",
+        "Submit the exact single-image intent frozen in quoteId, using the account Credits balance. This consumes Credits. Keep the SAME idempotencyKey when retrying a timed-out request. Returns a durable task; use get_task for status.",
       inputSchema: z.strictObject({ quoteId: id, idempotencyKey: intentKey }),
       outputSchema: output(taskSchema),
       annotations: { ...read, readOnlyHint: false },
