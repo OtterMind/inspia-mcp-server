@@ -17,7 +17,8 @@ const legacy = new LegacyClient({ name: "inspia-legacy-smoke", version: "0.1.0" 
 try {
   await modern.connect(new StreamableHTTPClientTransport(endpoint));
   const tools = await modern.listTools();
-  assert.equal(tools.tools.length, 5);
+  const expectedCount = modern.getServerVersion()?.version === "1.0.0" ? 10 : 5;
+  assert.equal(tools.tools.length, expectedCount);
   const search = await modern.callTool({ name: "search_prompts", arguments: { limit: 2 } });
   assert.ok(!search.isError, JSON.stringify(search));
   const data = search.structuredContent as {
@@ -55,7 +56,7 @@ try {
     console.info("PASS signed pagination and changed-filter rejection");
   }
   await legacy.connect(new LegacyTransport(endpoint));
-  assert.equal((await legacy.listTools()).tools.length, 5);
+  assert.equal((await legacy.listTools()).tools.length, expectedCount);
   const legacyResult = await legacy.callTool({
     name: "get_prompt",
     arguments: { promptId: first.id },
