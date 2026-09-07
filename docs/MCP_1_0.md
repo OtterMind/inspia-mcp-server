@@ -16,12 +16,11 @@ The site's key creation dialog explains private-data access and spending.
 There are no tools for keys to manage themselves or increase permissions.
 
 This addition requires site migration `0003_api_keys.sql` plus both updated
-services. It has not been deployed as part of local implementation. Existing
-OAuth setup below remains valid for clients that already use it.
+services. Deployed on 2026-09-07 from site `d0f16a9` and MCP `581dc7b`.
+Existing OAuth setup below remains valid for clients that already use it.
 
 1.0 adds five opt-in account tools to the five anonymous discovery tools.
-Production remains on 0.1 until the matching site release, migrations and
-flags are explicitly deployed. This is an independent service; it never
+The matching site release, migrations and flags are deployed. This is an independent service; it never
 opens PostgreSQL or calls Billing, generation providers or R2 directly.
 
 | Tool | Scope | Behavior |

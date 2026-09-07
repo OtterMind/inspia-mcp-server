@@ -6,17 +6,18 @@ quoted single-image generation. See [MCP 1.0](docs/MCP_1_0.md) for the new
 backend requirements, configuration and verification instructions.
 
 The new API Keys management flow uses `inspia_sk_` Bearer credentials and
-retains OAuth compatibility. It needs the matching site migration and service
-release; this local addition has not yet been deployed.
+retains OAuth compatibility. Deployed on 2026-09-07; see
+[production operations](deploy/README.md) for revisions and verification limits.
 
 **Production endpoint: [https://inspia.ai/mcp](https://inspia.ai/mcp)**
 
-The last verified production release is **0.1 Discovery**; implementing 1.0
-does not enable it in production. The instructions below describe Discovery.
+Production runs **1.0 with API Keys and OAuth**. The connection instructions
+below describe anonymous Discovery; private tools require authentication.
 
 Connect with **Streamable HTTP**, without an account or API key. No local server,
 Bun installation, or npm package is needed to use the hosted service. It reads
-public Inspia data and cannot generate media, access private accounts or spend Credits.
+public Inspia data. Private account tools can generate media and spend Credits
+only with a valid account credential.
 
 ## Connect with Codex
 
