@@ -1,10 +1,14 @@
 # Inspia MCP Server
 
-Read-only discovery of Inspia's attributed image and video prompts over remote
-MCP Streamable HTTP. This repository implements **0.1 Discovery**, the first
-milestone of the Inspia MCP design.
+Inspia's attributed prompt discovery over remote MCP Streamable HTTP, with
+opt-in **1.0 OAuth account tools** for Credits, tasks, private assets and
+quoted single-image generation. See [MCP 1.0](docs/MCP_1_0.md) for the new
+backend requirements, configuration and verification instructions.
 
 **Production endpoint: [https://inspia.ai/mcp](https://inspia.ai/mcp)**
+
+The last verified production release is **0.1 Discovery**; implementing 1.0
+does not enable it in production. The instructions below describe Discovery.
 
 Connect with **Streamable HTTP**, without an account or API key. No local server,
 Bun installation, or npm package is needed to use the hosted service. It reads

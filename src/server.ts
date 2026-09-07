@@ -1,5 +1,7 @@
 import { type CallToolResult, McpServer } from "@modelcontextprotocol/server";
 import type { z } from "zod";
+import { registerAccountTools } from "./account-tools";
+import type { AccountService } from "./accounts";
 import type { DiscoveryService } from "./discovery";
 import { publicError } from "./errors";
 import { portableOutput } from "./portable-schema";
@@ -33,10 +35,17 @@ const outputs = {
   models: portableOutput(modelsOutput),
 };
 
-export function createServer(service: DiscoveryService) {
+export function createServer(service: DiscoveryService, accounts?: AccountService, token?: string) {
   const server = new McpServer(
-    { name: "inspia", version: "0.1.0", title: "Inspia" },
-    { instructions },
+    { name: "inspia", version: accounts ? "1.0.0" : "0.1.0", title: "Inspia" },
+    {
+      instructions: accounts
+        ? instructions.replace(
+            "This server cannot generate, upload, access private accounts or spend Credits.",
+            "Account tools require OAuth. Show quoted Credits before generation; obey connection spending limits. Reuse the original idempotencyKey after interruption and poll get_task. Never share private assets or tokens.",
+          )
+        : instructions,
+    },
   );
   server.registerTool(
     "search_prompts",
@@ -98,6 +107,7 @@ export function createServer(service: DiscoveryService) {
     },
     (args) => result(modelsOutput, () => service.models(args.taskType)),
   );
+  if (accounts) registerAccountTools(server, accounts, token);
   return server;
 }
 

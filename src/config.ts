@@ -12,6 +12,8 @@ const envSchema = z.object({
   MCP_RATE_LIMIT: z.coerce.number().int().min(1).max(10000).default(60),
   MCP_MAX_CONCURRENT: z.coerce.number().int().min(1).max(1000).default(16),
   INSPIA_TIMEOUT_MS: z.coerce.number().int().min(100).max(60000).default(15000),
+  MCP_ACCOUNT_ENABLED: z.enum(["true", "false"]).default("false"),
+  MCP_RESOURCE_URL: z.url().default("https://inspia.ai/mcp"),
 });
 
 export type Config = ReturnType<typeof loadConfig>;
@@ -63,6 +65,18 @@ export function loadConfig(env: Record<string, string | undefined> = process.env
         ? ""
         : `http://localhost:${e.MCP_PORT},http://127.0.0.1:${e.MCP_PORT},http://[::1]:${e.MCP_PORT}`),
   );
+  const resource = new URL(e.MCP_RESOURCE_URL);
+  if (
+    resource.username ||
+    resource.password ||
+    resource.search ||
+    resource.hash ||
+    resource.pathname !== "/mcp" ||
+    (resource.protocol !== "https:" &&
+      !(resource.protocol === "http:" && loopback.includes(resource.hostname)))
+  ) {
+    throw new Error("MCP_RESOURCE_URL must be an HTTPS /mcp URL or HTTP loopback URL");
+  }
   if (
     allowedOrigins.some((value) => {
       try {
@@ -86,5 +100,8 @@ export function loadConfig(env: Record<string, string | undefined> = process.env
     rateLimit: e.MCP_RATE_LIMIT,
     maxConcurrent: e.MCP_MAX_CONCURRENT,
     timeoutMs: e.INSPIA_TIMEOUT_MS,
+    accountsEnabled: e.MCP_ACCOUNT_ENABLED === "true",
+    resourceUrl: resource.href,
+    issuerUrl: `${upstream.origin}/api/auth`,
   };
 }

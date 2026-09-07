@@ -2,6 +2,10 @@
 
 Verified on 2026-09-07. Public endpoint: **https://inspia.ai/mcp**.
 
+This document records the last verified 0.1 installation. The opt-in 1.0 code
+has not been deployed. Its coordinated site migration, flags, OAuth routes and
+rollback requirements are in [MCP 1.0](../docs/MCP_1_0.md).
+
 ## Installed Layout
 
 | Item | Location |

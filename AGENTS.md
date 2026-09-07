@@ -1,8 +1,9 @@
 # Project Instructions
 
-- This repository implements Inspia MCP 0.1 Discovery only. Read README.md for
+- This repository implements anonymous Discovery and opt-in 1.0 account tools. Read README.md for
   scope, public upstream contracts and deployment constraints before editing.
-- Keep it independent of the Inspia Next.js checkout. Read public Inspia APIs;
+- Keep it independent of the Inspia Next.js checkout. Read public Inspia APIs
+  and use scoped Bearer tokens for the main site's `/api/mcp/*` APIs;
   do not add database credentials, import sibling source or call providers.
 - Public brand: Inspia; canonical domain: https://inspia.ai.
 - Preserve original prompt text, creator attribution, source links, media
@@ -17,3 +18,7 @@
   implementation changes. `bun run test:live` is opt-in public read-only QA.
 - Do not deploy, publish the package, add private tools or run paid generation
   as part of a Discovery change.
+- MCP 1.0 is documented in docs/MCP_1_0.md. Main-site OAuth Connections,
+  immutable quotes and atomic spending limits authorize generation. Retrying
+  submission must reuse the original idempotency key; never auto-resubmit
+  after an unknown result. Feature flags default off.
