@@ -4,9 +4,9 @@ const credits = z.string().regex(/^\d+$/);
 const record = z.record(z.string(), z.json());
 export const creditsSchema = z.object({
   availableCredits: credits,
-  perRequestLimit: credits,
-  dailyLimit: credits,
-  dailyRemaining: credits,
+  perRequestLimit: credits.nullable(),
+  dailyLimit: credits.nullable(),
+  dailyRemaining: credits.nullable(),
   checkedAt: z.iso.datetime(),
 });
 const asset = z.object({

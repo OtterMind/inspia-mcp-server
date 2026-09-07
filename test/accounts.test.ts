@@ -33,14 +33,14 @@ function setup() {
           token === "Bearer limited"
             ? []
             : ["credits:read", "assets:read", "generation:create", "tasks:read"],
-        expiresAt: Date.now() / 1000 + 600,
+        expiresAt: token?.startsWith("Bearer inspia_sk_") ? null : Date.now() / 1000 + 600,
       });
     if (path === "/api/mcp/credits")
       return Response.json({
         availableCredits: "100",
-        perRequestLimit: "10",
-        dailyLimit: "50",
-        dailyRemaining: "40",
+        perRequestLimit: token?.startsWith("Bearer inspia_sk_") ? null : "10",
+        dailyLimit: token?.startsWith("Bearer inspia_sk_") ? null : "50",
+        dailyRemaining: token?.startsWith("Bearer inspia_sk_") ? null : "40",
         checkedAt: new Date().toISOString(),
         internalSecret: "must-not-leak",
       });
@@ -162,6 +162,32 @@ for (const legacy of [false, true])
       await app.close();
     }
   });
+test("non-expiring API keys work through the MCP transport with nullable account limits", async () => {
+  const { app, transportFetch } = setup();
+  const client = new Client({ name: "key-test", version: "1" });
+  try {
+    await client.connect(
+      new StreamableHTTPClientTransport(new URL("http://localhost:8788/mcp"), {
+        fetch: transportFetch(`Bearer inspia_sk_${"a".repeat(64)}`),
+      }),
+    );
+    const result = await client.callTool({ name: "get_credits", arguments: {} });
+    expect(result.isError).not.toBe(true);
+    expect(result.structuredContent).toEqual({
+      result: {
+        availableCredits: "100",
+        perRequestLimit: null,
+        dailyLimit: null,
+        dailyRemaining: null,
+        checkedAt: expect.any(String),
+      },
+    });
+  } finally {
+    await client.close();
+    await app.close();
+  }
+});
+
 test("HTTP authorization challenges, resource metadata, anonymous discovery and revoked tokens", async () => {
   const { app, calls, transportFetch } = setup();
   try {

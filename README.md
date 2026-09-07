@@ -1,9 +1,13 @@
 # Inspia MCP Server
 
 Inspia's attributed prompt discovery over remote MCP Streamable HTTP, with
-opt-in **1.0 OAuth account tools** for Credits, tasks, private assets and
+opt-in **1.0 account tools** for Credits, tasks, private assets and
 quoted single-image generation. See [MCP 1.0](docs/MCP_1_0.md) for the new
 backend requirements, configuration and verification instructions.
+
+The new API Keys management flow uses `inspia_sk_` Bearer credentials and
+retains OAuth compatibility. It needs the matching site migration and service
+release; this local addition has not yet been deployed.
 
 **Production endpoint: [https://inspia.ai/mcp](https://inspia.ai/mcp)**
 

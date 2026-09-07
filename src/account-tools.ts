@@ -45,7 +45,7 @@ export function registerAccountTools(server: McpServer, accounts: AccountService
     "get_credits",
     {
       description:
-        "Read your current Inspia Credits balance and this connection's spending limits. Requires credits:read.",
+        "Read your Inspia Credits balance. API keys use the account balance and return null for connection limits; existing OAuth grants may have limits. Requires credits:read.",
       inputSchema: z.strictObject({}),
       outputSchema: output(creditsSchema),
       annotations: read,

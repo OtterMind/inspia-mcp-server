@@ -299,7 +299,7 @@ export class DiscoveryService {
         .filter((model) => !taskType || model.supportedTasks.includes(taskType))
         .map((model) => modelOutput(model, catalog)),
       note: this.config.accountsEnabled
-        ? "Source-catalog models are separate. Call quote_generation with an available image model ID and its options for an authoritative, expiring quote. Generation requires OAuth and connection spending limits."
+        ? "Source-catalog models are separate. Call quote_generation with an available image model ID and its options for an authoritative, expiring quote. Generation requires an API key or OAuth and sufficient account Credits; existing OAuth grants may have spending limits."
         : "Discovery only: this MCP cannot generate or spend Credits. Source-catalog models are separate. The public API does not expose authoritative capability hashes or exact quotes; capabilityHash is null. optionsSchema describes website model options, not an MCP submission tool.",
     };
   }

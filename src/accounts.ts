@@ -15,7 +15,7 @@ const principalSchema = z.object({
   clientId: z.string(),
   connectionId: z.string(),
   scopes: z.array(z.string()),
-  expiresAt: z.number(),
+  expiresAt: z.number().nullable(),
 });
 export type AccountPrincipal = z.infer<typeof principalSchema>;
 
@@ -67,7 +67,7 @@ export class AccountService {
   }
   async authenticate(token: string): Promise<AccountPrincipal> {
     const p = principalSchema.parse(await this.request("/api/mcp/access", token));
-    if (p.expiresAt <= Date.now() / 1000)
+    if (p.expiresAt !== null && p.expiresAt <= Date.now() / 1000)
       throw new AccountError("INVALID_TOKEN", "Authorization expired", 401);
     return p;
   }
