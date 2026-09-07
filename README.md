@@ -5,8 +5,8 @@ opt-in **1.0 account tools** for Credits, tasks, private assets and
 quoted single-image generation. See [MCP 1.0](docs/MCP_1_0.md) for the new
 backend requirements, configuration and verification instructions.
 
-Account tools use `inspia_sk_` Bearer API keys. The current source removes old
-MCP OAuth compatibility; this removal has not yet been deployed. See
+Account tools use `inspia_sk_` Bearer API keys. Old MCP OAuth compatibility was
+removed in production on 2026-09-07. See
 [production operations](deploy/README.md) for the last deployed revision.
 
 **Production endpoint: [https://inspia.ai/mcp](https://inspia.ai/mcp)**

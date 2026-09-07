@@ -2,7 +2,37 @@
 
 Verified on 2026-09-07. Public endpoint: **https://inspia.ai/mcp**.
 
-## Current API Keys Release
+## Current API-Key-Only Release
+
+- MCP revision: `4c5756f`, release `/opt/inspia-mcp/releases/4c5756f`.
+- Site revision: `3b40d48`, release
+  `20260907T040250Z-3b40d48e3398-build-ugD1NbJDg6ZR8fS1TD1Em`.
+- No schema migration or historical data deletion. Existing API keys retained.
+- Previous releases: MCP `581dc7b`; site
+  `20260907T032105Z-d0f16a935d89-build-cRon5x7vB1eCzEmmUb5cR`.
+- Root-only environment backups and smoke scripts:
+  `/opt/promptguide/backups/mcp-api-only-3b40d48`.
+
+MCP OAuth pages, provider endpoints, metadata and JWT authentication are removed.
+Website Google/email login remains. Former OAuth clients must configure API keys.
+Tests passed (site 1048, MCP 33), as did lint, typecheck and builds. After font
+network failures, a successful Turbopack build was packaged through the existing
+release staging/health/rollback procedure without repeating compilation.
+
+The candidate passed public tools and modern/legacy SDK transports. Production
+source-server smoke passed retired OAuth routes (404), JWT rejection (401 with
+plain Bearer challenge), website sessions, key creation, no-store/list projection,
+owner/CSRF boundaries, usage, non-expiring key authentication through the official
+SDK, and revocation. Temporary accounts/keys were deleted; no Billing or generation
+was called. App, Task worker and MCP are active, generation health is ok and
+MCP automatic restarts are zero. Temporary candidate service and tunnel stopped.
+
+Public smoke and metadata probes encountered ECONNRESET from the client network.
+Cloudflare configuration remains operator-managed. Do not claim complete public
+validation based on source-server results. Restoring the previous code would
+also re-enable OAuth; account for that when considering rollback.
+
+## Historical API Keys Release
 
 - MCP application: `581dc7b`, `/opt/inspia-mcp/releases/581dc7b`.
 - Site application: `d0f16a9`, release

@@ -5,7 +5,8 @@
 Create a key at https://inspia.ai/account/api-keys and configure the client to
 send `Authorization: Bearer <key>`. Store it in client credential storage or
 an environment variable, never a prompt, URL or committed config.
-The current source removes MCP OAuth support; this removal is not deployed yet.
+MCP OAuth support was removed in production on 2026-09-07 (site 3b40d48,
+MCP 4c5756f). See deploy/README.md for verification and network limitations.
 Former OAuth clients must replace saved credentials with an API key.
 Website Google and email OTP login remain available.
 
