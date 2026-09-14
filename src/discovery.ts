@@ -294,7 +294,11 @@ export class DiscoveryService {
       catalogVersion: catalog.catalogVersion,
       stale: catalog.stale,
       websiteGenerationEnabled: catalog.enabled && catalog.submissionEnabled && !catalog.stale,
-      mcpGenerationEnabled: false,
+      mcpGenerationEnabled:
+        this.config.accountsEnabled === true &&
+        catalog.enabled &&
+        catalog.submissionEnabled &&
+        !catalog.stale,
       models: catalog.models
         .filter((model) => !taskType || model.supportedTasks.includes(taskType))
         .map((model) => modelOutput(model, catalog)),

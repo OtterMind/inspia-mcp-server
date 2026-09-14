@@ -216,7 +216,7 @@ export const modelsOutput = z.object({
   catalogVersion: z.string(),
   stale: z.boolean(),
   websiteGenerationEnabled: z.boolean(),
-  mcpGenerationEnabled: z.literal(false),
+  mcpGenerationEnabled: z.boolean(),
   models: z.array(
     z.object({
       id: z.string(),

@@ -100,7 +100,7 @@ export function createServer(service: DiscoveryService, accounts?: AccountServic
     {
       title: "List website generation models",
       description:
-        "Read live Inspia website model options, availability and catalog version. This Discovery MCP has no generation tool. Stale capabilities make models unavailable; exact prices and authoritative capability hashes are not exposed by this public API.",
+        "Read live Inspia model options, availability and catalog version. Account-enabled connections can also use the generation tools; stale capabilities make models unavailable.",
       inputSchema: modelsInput,
       outputSchema: outputs.models,
       annotations,

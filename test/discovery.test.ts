@@ -128,6 +128,16 @@ describe("discovery", () => {
     expect(calls).toHaveLength(2);
   });
 
+  test("reports MCP generation when accounts and upstream submission are enabled", async () => {
+    const upstream = fakeUpstream(() => undefined);
+    const service = new DiscoveryService(new InspiaClient(config, upstream.fetcher), {
+      ...config,
+      accountsEnabled: true,
+    });
+    const live = await service.models("image_generation");
+    expect(live.mcpGenerationEnabled).toBe(true);
+  });
+
   test("unknown search modes degrade honestly and invalid upstream data fails closed", async () => {
     const unknown = setup(() =>
       Response.json({
