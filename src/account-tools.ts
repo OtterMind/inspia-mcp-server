@@ -133,11 +133,11 @@ export function registerAccountTools(server: McpServer, accounts: AccountService
       return {
         ...response,
         content: [
-          ...response.content,
           ...images.filter(
             (image): image is { type: "image"; data: string; mimeType: "image/webp" } =>
               image !== null,
           ),
+          ...response.content,
         ],
       };
     },
