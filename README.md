@@ -1,14 +1,23 @@
 # Inspia MCP Server
 
-Read-only discovery of Inspia's attributed image and video prompts over remote
-MCP Streamable HTTP. This repository implements **0.1 Discovery**, the first
-milestone of the Inspia MCP design.
+Inspia's attributed prompt discovery over remote MCP Streamable HTTP, with
+opt-in **1.0 account tools** for Credits, tasks, private assets and
+quoted single-image generation. See [MCP 1.0](docs/MCP_1_0.md) for the new
+backend requirements, configuration and verification instructions.
+
+Account tools use `inspia_sk_` Bearer API keys. Old MCP OAuth compatibility was
+removed in production on 2026-09-07. See
+[production operations](deploy/README.md) for the last deployed revision.
 
 **Production endpoint: [https://inspia.ai/mcp](https://inspia.ai/mcp)**
 
+The connection instructions below describe anonymous Discovery; private tools
+require an API key from [API Keys](https://inspia.ai/account/api-keys).
+
 Connect with **Streamable HTTP**, without an account or API key. No local server,
 Bun installation, or npm package is needed to use the hosted service. It reads
-public Inspia data and cannot generate media, access private accounts or spend Credits.
+public Inspia data. Private account tools can generate media and spend Credits
+only with a valid account credential.
 
 ## Connect with Codex
 
@@ -317,8 +326,8 @@ docker run --rm --env-file .env -p 127.0.0.1:8788:8788 inspia-mcp-server
 A missing cursor secret or explicit host allowlist fails startup on a
 non-loopback listener. Docker packaging has not been validated in this environment.
 
-## Next boundary
+## Account Tools
 
-OAuth, private media, Credits, quotes and generation belong to the later Create
-milestone. They require coordinated changes to the Inspia application, not
-proxying website cookies through this read-only service.
+Private media, Credits, quotes and generation use the matching Inspia site's
+protected APIs. Authenticate with an API key; website cookies and former OAuth
+tokens are not accepted. See [MCP 1.0](docs/MCP_1_0.md) for setup and testing.

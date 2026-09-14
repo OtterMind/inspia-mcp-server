@@ -128,7 +128,8 @@ export class DiscoveryService {
   private readonly filterCache = new TtlCache<Filters>(300_000);
   constructor(
     private readonly client: InspiaClient,
-    config: Pick<Config, "cursorSecret" | "upstreamOrigin">,
+    private readonly config: Pick<Config, "cursorSecret" | "upstreamOrigin"> &
+      Partial<Pick<Config, "accountsEnabled">>,
   ) {
     this.cursor = new CursorCodec(config.cursorSecret, config.upstreamOrigin);
   }
@@ -293,11 +294,17 @@ export class DiscoveryService {
       catalogVersion: catalog.catalogVersion,
       stale: catalog.stale,
       websiteGenerationEnabled: catalog.enabled && catalog.submissionEnabled && !catalog.stale,
-      mcpGenerationEnabled: false,
+      mcpGenerationEnabled:
+        this.config.accountsEnabled === true &&
+        catalog.enabled &&
+        catalog.submissionEnabled &&
+        !catalog.stale,
       models: catalog.models
         .filter((model) => !taskType || model.supportedTasks.includes(taskType))
         .map((model) => modelOutput(model, catalog)),
-      note: "Discovery only: this MCP cannot generate or spend Credits. Source-catalog models are separate. The public API does not expose authoritative capability hashes or exact quotes; capabilityHash is null. optionsSchema describes website model options, not an MCP submission tool.",
+      note: this.config.accountsEnabled
+        ? "Source-catalog models are separate. Call quote_generation with an available image model ID and its options for an authoritative, expiring quote. Generation requires an API key and sufficient account Credits."
+        : "Discovery only: this MCP cannot generate or spend Credits. Source-catalog models are separate. The public API does not expose authoritative capability hashes or exact quotes; capabilityHash is null. optionsSchema describes website model options, not an MCP submission tool.",
     };
   }
 }

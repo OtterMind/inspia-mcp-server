@@ -2,7 +2,73 @@
 
 Verified on 2026-09-07. Public endpoint: **https://inspia.ai/mcp**.
 
-## Installed Layout
+## Current API-Key-Only Release
+
+- MCP revision: `4c5756f`, release `/opt/inspia-mcp/releases/4c5756f`.
+- Site revision: `3b40d48`, release
+  `20260907T040250Z-3b40d48e3398-build-ugD1NbJDg6ZR8fS1TD1Em`.
+- No schema migration or historical data deletion. Existing API keys retained.
+- Previous releases: MCP `581dc7b`; site
+  `20260907T032105Z-d0f16a935d89-build-cRon5x7vB1eCzEmmUb5cR`.
+- Root-only environment backups and smoke scripts:
+  `/opt/promptguide/backups/mcp-api-only-3b40d48`.
+
+MCP OAuth pages, provider endpoints, metadata and JWT authentication are removed.
+Website Google/email login remains. Former OAuth clients must configure API keys.
+Tests passed (site 1048, MCP 33), as did lint, typecheck and builds. After font
+network failures, a successful Turbopack build was packaged through the existing
+release staging/health/rollback procedure without repeating compilation.
+
+The candidate passed public tools and modern/legacy SDK transports. Production
+source-server smoke passed retired OAuth routes (404), JWT rejection (401 with
+plain Bearer challenge), website sessions, key creation, no-store/list projection,
+owner/CSRF boundaries, usage, non-expiring key authentication through the official
+SDK, and revocation. Temporary accounts/keys were deleted; no Billing or generation
+was called. App, Task worker and MCP are active, generation health is ok and
+MCP automatic restarts are zero. Temporary candidate service and tunnel stopped.
+
+Public smoke and metadata probes encountered ECONNRESET from the client network.
+Cloudflare configuration remains operator-managed. Do not claim complete public
+validation based on source-server results. Restoring the previous code would
+also re-enable OAuth; account for that when considering rollback.
+
+## Historical API Keys Release
+
+- MCP application: `581dc7b`, `/opt/inspia-mcp/releases/581dc7b`.
+- Site application: `d0f16a9`, release
+  `20260907T032105Z-d0f16a935d89-build-cRon5x7vB1eCzEmmUb5cR`.
+- Migration: `0003_api_keys.sql` applied transactionally with existing migration
+  checksum verification. Previous OAuth grants and limits retained.
+- Previous MCP release retained: `/opt/inspia-mcp/releases/6c5ef21`.
+- Previous site release retained:
+  `/opt/promptguide/releases/20260907T022536Z-f90d640bc336-build-AEoxF1zFgwZCywfT8VhVv`.
+- Environment backups and migration/smoke scripts:
+  `/opt/promptguide/backups/mcp-keys-d0f16a9`, root-only.
+
+Both repositories passed lint, typecheck, tests and build (site: 1046 passed,
+3 opt-in checks skipped; MCP: 32 passed). Repeated font downloads failed during
+the combined release script, so the clean, separately successful build was
+packaged without repeating compilation. The existing packaging, staged health
+checks, source-drift guard and rollback procedure were retained.
+
+The candidate passed all five discovery tools and modern/legacy SDK checks.
+After activation, source-server smoke passed key creation, owner isolation,
+CSRF rejection, one-time secret/list projection, account page, empty usage,
+MCP scoped task reads, key revocation and OAuth registration/consent/PKCE/JWT
+revocation. Temporary users, sessions, keys and clients were removed. No Billing
+grant, balance read, consumption or generation was performed. App, matching
+Task worker and MCP are active; generation health is ok and MCP restarts are zero.
+
+Public modern discovery and pagination passed once; the complete public suite
+then hit intermittent connection resets. A public authenticated probe from the
+server received a Cloudflare managed challenge. Cloudflare rules were left for
+the operator as requested. Do not interpret successful source-server validation
+as full public-client readiness. Temporary stage service and SSH tunnel stopped.
+
+Restore the previous service symlinks to roll back code; retain the additive
+schema. See [MCP 1.0](../docs/MCP_1_0.md) for authentication and account behavior.
+
+## Historical 0.1 Layout
 
 | Item | Location |
 | --- | --- |

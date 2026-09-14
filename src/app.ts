@@ -1,4 +1,5 @@
 import { createMcpHandler, hostHeaderValidationResponse } from "@modelcontextprotocol/server";
+import { AccountError, AccountService, PRIVATE_SCOPES } from "./accounts";
 import type { Config } from "./config";
 import { DiscoveryService } from "./discovery";
 import { createServer } from "./server";
@@ -6,10 +7,15 @@ import { type Fetcher, InspiaClient, readBounded } from "./upstream";
 
 export function createApp(config: Config, fetcher?: Fetcher) {
   const service = new DiscoveryService(new InspiaClient(config, fetcher), config);
-  const handler = createMcpHandler(() => createServer(service), {
-    legacy: "stateless",
-    responseMode: "json",
-  });
+  const accounts = config.accountsEnabled ? new AccountService(config, fetcher) : undefined;
+  const handler = createMcpHandler(
+    ({ requestInfo }) =>
+      createServer(service, accounts, requestInfo?.headers.get("authorization") ?? undefined),
+    {
+      legacy: "stateless",
+      responseMode: "json",
+    },
+  );
   const rates = new Map<string, { count: number; reset: number }>();
   let concurrent = 0;
 
@@ -40,7 +46,7 @@ export function createApp(config: Config, fetcher?: Fetcher) {
       return json({
         status: "ok",
         service: "inspia-mcp-server",
-        version: "0.1.0",
+        version: accounts ? "1.0.0" : "0.1.0",
         enabled: config.enabled,
         upstreamChecked: false,
       });
@@ -48,16 +54,16 @@ export function createApp(config: Config, fetcher?: Fetcher) {
     if (request.method === "GET" && url.pathname === "/") {
       return json({
         name: "Inspia",
-        version: "0.1.0",
+        version: accounts ? "1.0.0" : "0.1.0",
         endpoint: "/mcp",
         transport: "Streamable HTTP",
-        mode: "read-only-discovery",
+        mode: accounts ? "discovery-and-account-tools" : "read-only-discovery",
         website: "https://inspia.ai",
       });
     }
     if (url.pathname !== "/mcp") return json({ error: "Not found" }, 404);
     if (!config.enabled) return json({ error: "Discovery is disabled" }, 503);
-    if (request.headers.has("authorization"))
+    if (!accounts && request.headers.has("authorization"))
       return json(
         { error: "Discovery is anonymous. Remove Authorization; credentials are not accepted." },
         400,
@@ -69,7 +75,7 @@ export function createApp(config: Config, fetcher?: Fetcher) {
           Allow: "POST, OPTIONS",
           "Access-Control-Allow-Methods": "POST, OPTIONS",
           "Access-Control-Allow-Headers":
-            "Content-Type, Accept, MCP-Protocol-Version, Mcp-Method, Mcp-Name, Last-Event-ID",
+            "Content-Type, Accept, Authorization, MCP-Protocol-Version, Mcp-Method, Mcp-Name, Last-Event-ID",
           "Access-Control-Max-Age": "600",
         },
       });
@@ -98,6 +104,35 @@ export function createApp(config: Config, fetcher?: Fetcher) {
         );
       } catch {
         return json({ error: "Request body exceeds 64 KiB or could not be read" }, 413);
+      }
+      if (accounts) {
+        let required: readonly string[] = [];
+        try {
+          const rpc = JSON.parse(body);
+          if (rpc.method === "tools/call" && typeof rpc.params?.name === "string")
+            required = PRIVATE_SCOPES[rpc.params.name] ?? [];
+        } catch {
+          /* SDK handles malformed JSON. */
+        }
+        const token = request.headers.get("authorization");
+        if (required.length && !token) return accounts.challenge(401, required);
+        if (token) {
+          try {
+            const p = await accounts.authenticate(token);
+            if (!required.every((scope) => p.scopes.includes(scope)))
+              return accounts.challenge(403, required);
+          } catch (error) {
+            if (error instanceof AccountError && (error.status === 401 || error.status === 403))
+              return accounts.challenge(error.status, required);
+            return json(
+              {
+                code: "ACCOUNT_UNAVAILABLE",
+                error: "Inspia authorization is temporarily unavailable",
+              },
+              503,
+            );
+          }
+        }
       }
       const forwarded = new Request(request.url, {
         method: request.method,

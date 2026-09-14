@@ -10,7 +10,9 @@ const server = Bun.serve({
   idleTimeout: 60,
   fetch: (request, server) => app.fetch(request, server.requestIP(request)?.address ?? "unknown"),
 });
-console.info(`Inspia Discovery MCP 0.1.0 listening at ${server.url}mcp`);
+console.info(
+  `Inspia MCP ${config.accountsEnabled ? "1.0.0" : "0.1.0"} listening at ${server.url}mcp`,
+);
 
 let closing = false;
 async function shutdown() {

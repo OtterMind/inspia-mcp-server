@@ -12,6 +12,7 @@ const envSchema = z.object({
   MCP_RATE_LIMIT: z.coerce.number().int().min(1).max(10000).default(60),
   MCP_MAX_CONCURRENT: z.coerce.number().int().min(1).max(1000).default(16),
   INSPIA_TIMEOUT_MS: z.coerce.number().int().min(100).max(60000).default(15000),
+  MCP_ACCOUNT_ENABLED: z.enum(["true", "false"]).default("false"),
 });
 
 export type Config = ReturnType<typeof loadConfig>;
@@ -86,5 +87,6 @@ export function loadConfig(env: Record<string, string | undefined> = process.env
     rateLimit: e.MCP_RATE_LIMIT,
     maxConcurrent: e.MCP_MAX_CONCURRENT,
     timeoutMs: e.INSPIA_TIMEOUT_MS,
+    accountsEnabled: e.MCP_ACCOUNT_ENABLED === "true",
   };
 }
