@@ -133,7 +133,7 @@ export function registerAccountTools(server: McpServer, accounts: AccountService
             preview: z
               .object({
                 mimeType: z.literal("image/webp"),
-                data: z.string().max(1_398_104),
+                data: z.string().max(699_050),
                 width: z.number(),
                 height: z.number(),
                 derived: z.literal(true),
