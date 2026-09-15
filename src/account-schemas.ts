@@ -17,7 +17,6 @@ const asset = z.object({
   height: z.number().nullable(),
   bytes: z.number().nonnegative(),
   url: z.url(),
-  authRequired: z.literal(true),
   direction: z.enum(["input", "output"]),
   role: z.string(),
   position: z.number().int(),
@@ -79,7 +78,6 @@ export const assetSchema = z.object({
   height: z.number().nullable(),
   bytes: z.number().nonnegative(),
   downloadEndpoint: z.url(),
-  authRequired: z.literal(true),
   preview: z
     .object({
       mimeType: z.literal("image/webp"),

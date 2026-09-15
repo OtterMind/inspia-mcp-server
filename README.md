@@ -1,7 +1,7 @@
 # Inspia MCP Server
 
 Inspia's attributed prompt discovery over remote MCP Streamable HTTP, with
-opt-in **1.0 account tools** for Credits, tasks, private assets and
+opt-in **1.0 account tools** for Credits, tasks, account asset metadata and
 quoted single-image generation. See [MCP 1.0](docs/MCP_1_0.md) for the new
 backend requirements, configuration and verification instructions.
 
@@ -11,7 +11,7 @@ removed in production on 2026-09-07. See
 
 **Production endpoint: [https://inspia.ai/mcp](https://inspia.ai/mcp)**
 
-The connection instructions below describe anonymous Discovery; private tools
+The connection instructions below describe anonymous Discovery; account tools
 require an API key from [API Keys](https://inspia.ai/account/api-keys).
 
 Connect with **Streamable HTTP**, without an account or API key. No local server,
