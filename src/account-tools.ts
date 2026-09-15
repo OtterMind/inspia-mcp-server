@@ -101,52 +101,14 @@ export function registerAccountTools(server: McpServer, accounts: AccountService
     },
     async (args) => {
       const response = await run(taskSchema, "/api/mcp/generate", args);
-      if (response.isError || !response.structuredContent) return response;
-      if (!token) return response;
-      const task = response.structuredContent.result as z.infer<typeof taskSchema>;
-      if (task.status !== "succeeded") return response;
-      const images = await Promise.all(
-        task.assets
-          .filter((asset) => asset.kind === "image" && asset.direction === "output")
-          .map(async (asset) => {
-            try {
-              const data = await accounts.request(
-                `/api/mcp/assets/${asset.id}`,
-                token,
-                undefined,
-                new URLSearchParams({ representation: "preview" }),
-              );
-              const preview = z
-                .object({
-                  preview: z.object({
-                    mimeType: z.literal("image/webp"),
-                    data: z.string().max(699_050),
-                  }),
-                })
-                .parse(data).preview;
-              return { type: "image" as const, data: preview.data, mimeType: preview.mimeType };
-            } catch {
-              return null;
-            }
-          }),
-      );
-      return {
-        ...response,
-        content: [
-          ...images.filter(
-            (image): image is { type: "image"; data: string; mimeType: "image/webp" } =>
-              image !== null,
-          ),
-          ...response.content,
-        ],
-      };
+      return response;
     },
   );
   server.registerTool(
     "read_asset",
     {
       description:
-        "Read your private asset metadata or a bounded derived image preview. Original downloads require client-managed Bearer authentication; never expose tokens in prompts or URLs.",
+        "Read your account asset metadata or a bounded derived image preview. The original media URL is public-read and does not require a Bearer token.",
       inputSchema: z.strictObject({
         assetId: id,
         representation: z.enum(["metadata", "preview"]).default("metadata"),

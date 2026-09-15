@@ -95,8 +95,7 @@ function setup() {
         width: 1024,
         height: 1024,
         bytes: 4000,
-        downloadEndpoint: "https://inspia.ai/api/mcp/assets/asset",
-        authRequired: true,
+        downloadEndpoint: "https://inspia.ai/api/assets/asset",
         storageKey: "must-not-leak",
         preview: { mimeType: "image/webp", width: 32, height: 32, derived: true, data: "YWJj" },
       });
